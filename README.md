@@ -1,6 +1,7 @@
 # Portage Action
 
-A GitHub Action to mirror container images between registries. Copy container images from one registry to another with support for batch operations.
+A GitHub Action to mirror container images between registries. Copy container images from one registry to another with
+support for batch operations.
 
 ## Features
 
@@ -20,7 +21,8 @@ A GitHub Action to mirror container images between registries. Copy container im
       [
         {
           "source": "docker.io/nginx:latest",
-          "target": "ghcr.io/myorg/nginx:latest"
+          "destination": "ghcr.io/myorg/nginx:latest",
+          "architecture": "linux/amd64"
         }
       ]
 ```
@@ -35,11 +37,13 @@ A GitHub Action to mirror container images between registries. Copy container im
       [
         {
           "source": "docker.io/nginx:1.21",
-          "target": "ghcr.io/myorg/nginx:1.21"
+          "destination": "ghcr.io/myorg/nginx:1.21",
+          "architecture": "linux/amd64"
         },
         {
           "source": "docker.io/redis:alpine",
-          "target": "ghcr.io/myorg/redis:alpine"
+          "destination": "ghcr.io/myorg/redis:alpine",
+          "architecture": "linux/arm64"
         }
       ]
 ```
@@ -54,15 +58,18 @@ A GitHub Action to mirror container images between registries. Copy container im
 ```
 
 Example `images.json`:
+
 ```json
 [
   {
     "source": "docker.io/nginx:latest",
-    "target": "ghcr.io/myorg/nginx:latest"
+    "destination": "ghcr.io/myorg/nginx:latest",
+    "architecture": "linux/amd64"
   },
   {
     "source": "docker.io/postgres:13",
-    "target": "ghcr.io/myorg/postgres:13"
+    "destination": "ghcr.io/myorg/postgres:13",
+    "architecture": "linux/arm64"
   }
 ]
 ```
@@ -95,7 +102,8 @@ jobs:
             [
               {
                 "source": "docker.io/nginx:latest",
-                "target": "ghcr.io/${{ github.repository }}/nginx:latest"
+                "destination": "ghcr.io/${{ github.repository }}/nginx:latest",
+                "architecture": "linux/amd64"
               }
             ]
 
@@ -107,20 +115,20 @@ jobs:
 
 ## Inputs
 
-| Input         | Description                                                                             | Required | Default |
-|---------------|-----------------------------------------------------------------------------------------|----------|---------|
-| `images`      | JSON array of images to mirror. Each object must have `source` and `target` properties. | No*      |         |
-| `images-file` | Path to a file containing JSON array of images to mirror                                | No*      |         |
+| Input         | Description                                              | Required | Default |
+|---------------|----------------------------------------------------------|----------|---------|
+| `images`      | JSON array of images to mirror                           | No*      |         |
+| `images-file` | Path to a file containing JSON array of images to mirror | No*      |         |
 
 *Either `images` or `images-file` must be provided, but not both.
 
 ## Outputs
 
-| Output          | Description                                                                                                     |
-|-----------------|-----------------------------------------------------------------------------------------------------------------|
-| `results`       | JSON array containing results for each mirrored image with digest, size, source, target, and status information |
-| `success-count` | Number of images successfully mirrored                                                                          |
-| `total-count`   | Total number of images processed                                                                                |
+| Output          | Description                                                                                                          |
+|-----------------|----------------------------------------------------------------------------------------------------------------------|
+| `results`       | JSON array containing results for each mirrored image with digest, size, source, destination, and status information |
+| `success-count` | Number of images successfully mirrored                                                                               |
+| `total-count`   | Total number of images processed                                                                                     |
 
 ### Example Output
 
@@ -128,7 +136,7 @@ jobs:
 [
   {
     "source": "docker.io/nginx:latest",
-    "target": "ghcr.io/myorg/nginx:latest",
+    "destination": "ghcr.io/myorg/nginx:latest",
     "digest": "sha256:abc123...",
     "size": "142MB",
     "status": "success"
@@ -139,12 +147,12 @@ jobs:
 ## Prerequisites
 
 - The runner must have Docker installed (available by default on `ubuntu-latest`)
-- Authentication to source and target registries must be configured using `docker/login-action` or similar
-- Appropriate permissions to pull from source and push to target registries
+- Authentication to source and destination registries must be configured using `docker/login-action` or similar
+- Appropriate permissions to pull from source and push to destination registries
 
 ## Authentication
 
-Before using this action, ensure you're authenticated to both source and target registries:
+Before using this action, ensure you're authenticated to both source and destination registries:
 
 ```yaml
 - name: Login to Docker Hub

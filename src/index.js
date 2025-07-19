@@ -36,8 +36,8 @@ async function run() {
     }
 
     for (const image of images) {
-      if (!image.source || !image.target) {
-        throw new Error('Each image mapping must have "source" and "target" properties');
+      if (!image.source || !image.destination || !image.architecture) {
+        throw new Error('Each image mapping must have "source", "destination", and "architecture" properties');
       }
     }
 
@@ -47,38 +47,45 @@ async function run() {
     let successCount = 0;
 
     for (let i = 0; i < images.length; i++) {
-      const { source: sourceImage, target: targetImage } = images[i];
+      const { source: sourceImage, destination: destinationImage, architecture } = images[i];
 
       try {
-        core.info(`\n--- Processing image ${i + 1}/${images.length}: ${sourceImage} -> ${targetImage} ---`);
+        const archInfo = architecture ? ` (${architecture})` : '';
+        core.info(`\n--- Processing image ${i + 1}/${images.length}: ${sourceImage} -> ${destinationImage}${archInfo} ---`);
 
-        core.info(`Pulling source image: ${sourceImage}`);
-        await exec.exec('docker', ['pull', sourceImage]);
+        const pullArgs = ['pull'];
+        if (architecture) {
+          pullArgs.push('--platform', architecture);
+        }
+        pullArgs.push(sourceImage);
 
-        core.info(`Tagging image as: ${targetImage}`);
-        await exec.exec('docker', ['tag', sourceImage, targetImage]);
+        core.info(`Pulling source image: ${sourceImage}${archInfo}`);
+        await exec.exec('docker', pullArgs);
 
-        core.info(`Pushing to target registry: ${targetImage}`);
-        await exec.exec('docker', ['push', targetImage]);
+        core.info(`Tagging image as: ${destinationImage}`);
+        await exec.exec('docker', ['tag', sourceImage, destinationImage]);
 
-        const imageInfo = await getImageInfo(targetImage);
+        core.info(`Pushing to destination registry: ${destinationImage}`);
+        await exec.exec('docker', ['push', destinationImage]);
+
+        const imageInfo = await getImageInfo(destinationImage);
 
         results.push({
           source: sourceImage,
-          target: targetImage,
+          destination: destinationImage,
           digest: imageInfo.digest,
           size: imageInfo.size,
           status: 'success'
         });
 
         successCount++;
-        core.info(`✅ Successfully mirrored: ${sourceImage} -> ${targetImage}`);
+        core.info(`✅ Successfully mirrored: ${sourceImage} -> ${destinationImage}`);
 
       } catch (imageError) {
-        core.error(`❌ Failed to mirror ${sourceImage} -> ${targetImage}: ${imageError.message}`);
+        core.error(`❌ Failed to mirror ${sourceImage} -> ${destinationImage}: ${imageError.message}`);
         results.push({
           source: sourceImage,
-          target: targetImage,
+          destination: destinationImage,
           digest: '',
           size: '',
           status: 'failed',

@@ -11,7 +11,7 @@ inputs:
 
 outputs:
   results:
-    description: JSON array containing results for each mirrored image with digest, size, source, and target information
+    description: JSON array containing results for each mirrored image with digest, size, source, and destination information
   success-count:
     description: Number of images successfully mirrored
   total-count:
