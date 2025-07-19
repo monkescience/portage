@@ -1,0 +1,19 @@
+name: Portage
+description: Mirror container images between registries
+
+inputs:
+  images:
+    description: JSON array of images to mirror with source and target repository URLs
+    required: true
+
+outputs:
+  results:
+    description: JSON array containing results for each mirrored image with digest, size, source, and target information
+  success-count:
+    description: Number of images successfully mirrored
+  total-count:
+    description: Total number of images processed
+
+runs:
+  using: node20
+  main: dist/index.js

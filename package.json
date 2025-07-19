@@ -1,0 +1,34 @@
+{
+  "name": "portage",
+  "version": "0.0.1",
+  "description": "GitHub Action to mirror container images between registries",
+  "author": "monkescience",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build src/index.js --out dist --minify",
+    "package": "npm run build",
+    "test": "jest",
+    "all": "npm run build && npm run package"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/monkescience/portage.git"
+  },
+  "keywords": [
+    "actions",
+    "docker",
+    "mirror",
+    "registry",
+    "container"
+  ],
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/exec": "^1.1.1",
+    "@actions/io": "^1.1.3"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.3",
+    "jest": "^30.0.4"
+  }
+}

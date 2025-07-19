@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
