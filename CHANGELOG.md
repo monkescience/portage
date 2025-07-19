@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/monkescience/portage-action/compare/v0.2.0...v0.3.0) (2025-07-19)
+
+
+### Features
+
+* **action:** update image mapping properties to use 'destination' and add architecture support ([35e5b92](https://github.com/monkescience/portage-action/commit/35e5b9287ddc9460426c5f22af3b1b4a6c71236d))
+
 ## [0.2.0](https://github.com/monkescience/portage-action/compare/v0.1.0...v0.2.0) (2025-07-19)
 
 
