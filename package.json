@@ -1,5 +1,5 @@
 {
-  "name": "portage",
+  "name": "portage-action",
   "version": "0.0.1",
   "description": "GitHub Action to mirror container images between registries",
   "author": "monkescience",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/monkescience/portage.git"
+    "url": "git+https://github.com/monkescience/portage-action.git"
   },
   "keywords": [
     "actions",

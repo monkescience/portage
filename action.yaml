@@ -1,10 +1,13 @@
-name: Portage
+name: portage-action
 description: Mirror container images between registries
 
 inputs:
   images:
-    description: JSON array of images to mirror with source and target repository URLs
-    required: true
+    description: JSON array of images to mirror
+    required: false
+  images-file:
+    description: Path to a file containing JSON array of images to mirror
+    required: false
 
 outputs:
   results:

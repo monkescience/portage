@@ -1,18 +1,38 @@
 const core = require('@actions/core');
 const exec = require('@actions/exec');
+const fs = require('fs');
 
 async function run() {
   try {
-    const imagesInput = core.getInput('images', { required: true });
+    const imagesInput = core.getInput('images');
+    const imagesFileInput = core.getInput('images-file');
+
+    if (!imagesInput && !imagesFileInput) {
+      throw new Error('Either "images" or "images-file" input must be provided');
+    }
+
+    if (imagesInput && imagesFileInput) {
+      throw new Error('Only one of "images" or "images-file" inputs should be provided, not both');
+    }
 
     let images;
     try {
-      images = JSON.parse(imagesInput);
-      if (!Array.isArray(images)) {
-        images = [images];
+      if (imagesInput) {
+        images = JSON.parse(imagesInput);
+        if (!Array.isArray(images)) {
+          images = [images];
+        }
+      } else {
+        core.info(`Reading images from file: ${imagesFileInput}`);
+        const fileContent = fs.readFileSync(imagesFileInput, 'utf8');
+        images = JSON.parse(fileContent);
+        if (!Array.isArray(images)) {
+          images = [images];
+        }
       }
     } catch (parseError) {
-      throw new Error(`Invalid images input format. Expected JSON array or object: ${parseError.message}`);
+      const source = imagesInput ? 'images input' : `images file: ${imagesFileInput}`;
+      throw new Error(`Invalid images format in ${source}. Expected JSON array or object: ${parseError.message}`);
     }
 
     for (const image of images) {
